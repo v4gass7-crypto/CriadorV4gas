@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Ordem Paranormal - Neon Verde</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Orbitron',sans-serif;background:#0a0a0f;color:#0f0;}
+.container{max-width:700px;margin:auto;padding:15px;border:2px solid #0f0;border-radius:12px;box-shadow:0 0 20px #0f0;}
+h2,h3{color:#0f0;}
+.tab-container{display:flex;gap:2px;margin-bottom:10px;flex-wrap:wrap;}
+.tab{flex:1;text-align:center;padding:12px;cursor:pointer;background:#111;font-weight:bold;font-size:14px;border-radius:4px 4px 0 0;text-shadow:0 0 5px #0f0;transition:.3s;}
+.tab.active{background:#0a0;border-bottom:2px solid #0f0;color:#fff;}
+.section{display:none;background:#111;padding:15px;border-radius:0 0 8px 8px;box-shadow:0 0 15px #0f0 inset;}
+.section.active{display:block;}
+input,select,button{width:100%;margin:4px 0;padding:8px;background:#222;border:1px solid #333;color:#0f0;border-radius:6px;box-sizing:border-box;font-family:'Orbitron',sans-serif;text-shadow:0 0 3px #0f0;}
+button{cursor:pointer;background:#333;transition:.2s;}
+button:hover:not([disabled]){background:#4a4a22;}
+button:disabled{background:#555;cursor:not-allowed;}
+.bar-grid{display:grid;grid-template-columns:repeat(20,1fr);gap:2px;margin:5px 0;}
+.square{width:100%;padding-top:100%;background:#222;border-radius:2px;}
+.fill-pv{background:#0f0;box-shadow:0 0 6px #0f0;}
+.fill-pe{background:#0ff;box-shadow:0 0 6px #0ff;}
+.fill-san{background:#ff0;box-shadow:0 0 6px #ff0;}
+.pericia,.item-linha,.ritual-card{display:flex;justify-content:space-between;align-items:center;background:#222;padding:8px;margin:4px 0;border-radius:6px;flex-wrap:wrap;box-shadow:0 0 5px #0f0 inset;}
+.pericia.maximo{border-left:4px solid #f1c40f;}
+.grid-dados{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:10px;}
+.carga-container{background:#222;padding:10px;border-radius:8px;margin-top:10px;text-align:center;border:1px solid #444;box-shadow:0 0 6px #0f0 inset;}
+</style>
+</head>
+<body>
+<div class="container">
+  Nome: <input id="nomeInput" placeholder="Digite o nome">
+  <div class="tab-container">
+    <div class="tab active" data-tab="statusTab">Status</div>
+    <div class="tab" data-tab="periciasTab">Perícias</div>
+    <div class="tab" data-tab="habilidadesTab">Habilidades</div>
+    <div class="tab" data-tab="inventarioTab">Mochila</div>
+    <div class="tab" data-tab="rituaisTab">Rituais</div>
+  </div>
+
+  <div id="statusTab" class="section active">
+    Classe:
+    <select id="classeSelect">
+      <option value="combatente">Combatente</option>
+      <option value="especialista">Especialista</option>
+      <option value="ocultista">Ocultista</option>
+    </select>
+    <div class="grid-dados">
+      <div>FOR: <input id="forcaInput" type="number" value="1" min="0"></div>
+      <div>AGI: <input id="agilidadeInput" type="number" value="1" min="0"></div>
+      <div>VIG: <input id="vigorInput" type="number" value="1" min="0"></div>
+      <div>INT: <input id="intelectoInput" type="number" value="1" min="0"></div>
+      <div>PRE: <input id="presencaInput" type="number" value="1" min="0"></div>
+      <div>NEX: <input id="nexInput" type="number" value="5" step="5" min="5"></div>
+    </div>
+    <h3>Defesa</h3>
+    <input id="defesaInput" type="number" min="0" style="width:60px;"> <span id="defesaTotal">=0</span>
+
+    <h3>PV</h3>
+    <div style="display:flex;gap:5px;">
+      <input id="pvInput" type="number" min="0">
+      <button onclick="alterarPV(1)">+1</button>
+      <button onclick="alterarPV(5)">+5</button>
+      <button onclick="alterarPV(-1)">-1</button>
+      <button onclick="alterarPV(-5)">-5</button>
+    </div>
+    <div id="pvBar" class="bar-grid"></div>
+    <span id="pvMaxDisplay">0 / 0</span>
+
+    <h3>PE</h3>
+    <div style="display:flex;gap:5px;">
+      <input id="peInput" type="number" min="0">
+      <button onclick="alterarPE(1)">+1</button>
+      <button onclick="alterarPE(5)">+5</button>
+      <button onclick="alterarPE(-1)">-1</button>
+      <button onclick="alterarPE(-5)">-5</button>
+    </div>
+    <div id="peBar" class="bar-grid"></div>
+    <span id="peMaxDisplay">0 / 0</span>
+
+    <h3>Sanidade</h3>
+    <div style="display:flex;gap:5px;">
+      <input id="sanInput" type="number" min="0">
+      <button onclick="alterarSAN(1)">+1</button>
+      <button onclick="alterarSAN(5)">+5</button>
+      <button onclick="alterarSAN(-1)">-1</button>
+      <button onclick="alterarSAN(-5)">-5</button>
+    </div>
+    <div id="sanBar" class="bar-grid"></div>
+    <span id="sanMaxDisplay">0 / 0</span>
+
+    <div class="carga-container">
+      <strong>Espaços: <span id="cargaAtual">0</span> / <span id="cargaMax">0</span></strong>
+    </div>
+  </div>
+
+  <div id="periciasTab" class="section"><h2>Perícias</h2><div id="periciasContainer"></div></div>
+
+  <div id="habilidadesTab" class="section">
+    <h2>Habilidades</h2>
+    <div id="habilidadesLista"></div>
+    <input id="habilidadeNome" placeholder="Nome">
+    <input id="habilidadeDescricao" placeholder="Descrição">
+    <button id="btnAddHabilidade">Adicionar</button>
+  </div>
+
+  <div id="inventarioTab" class="section">
+    <h2>Inventário</h2>
+    <div id="itensLista"></div>
+    <button id="btnAddItem">+ Adicionar</button>
+  </div>
+
+  <div id="rituaisTab" class="section">
+    <h2>Rituais</h2>
+    <div id="rituaisLista"></div>
+    <input id="ritualNome" placeholder="Nome">
+    <input id="ritualCusto" type="number" min="0" placeholder="PE">
+    <button id="btnAddRitual">Aprender</button>
+  </div>
+</div>
+
+<script>
+const estado={nome:"",pv:0,pe:0,san:0,pvM:0,peM:0,sanM:0,defesa:0,treinos:{},itens:[],rituais:[],habilidades:[]};
+const mapaPericias={"Luta":"forca","Atletismo":"forca","Acrobacia":"agilidade","Furtividade":"agilidade","Iniciativa":"agilidade","Pontaria":"agilidade","Reflexos":"agilidade","Pilotagem":"agilidade","Fortitude":"vigor","Atualidades":"intelecto","Ciências":"intelecto","Crime":"intelecto","Investigação":"intelecto","Medicina":"intelecto","Tática":"intelecto","Tecnologia":"intelecto","Artes":"intelecto","Diplomacia":"presenca","Enganação":"presenca","Intimidação":"presenca","Intuição":"presenca","Religião":"presenca","Sobrevivência":"presenca","Adestramento":"presenca","Percepção":"presenca"};
+
+document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{document.querySelectorAll(".tab,.section").forEach(x=>x.classList.remove("active"));t.classList.add("active");document.getElementById(t.dataset.tab).classList.add("active");});
+
+function alterarPV(q){estado.pv=Math.min(estado.pvM,Math.max(0,estado.pv+q));atualizarBarras();salvar();}
+function alterarPE(q){estado.pe=Math.min(estado.peM,Math.max(0,estado.pe+q));atualizarBarras();salvar();}
+function alterarSAN(q){estado.san=Math.min(estado.sanM,Math.max(0,estado.san+q));atualizarBarras();salvar();}
+
+function atualizarBarras(){
+  function criar(el,max,atual,classe){el.innerHTML="";let filled=max?Math.round(atual/max*20):0;for(let i=0;i<20;i++){let sq=document.createElement("div");sq.className="square"+(i<filled?` ${classe}`:"");el.appendChild(sq);}}
+  criar(document.getElementById("pvBar"),estado.pvM,estado.pv,"fill-pv");
+  criar(document.getElementById("peBar"),estado.peM,estado.pe,"fill-pe");
+  criar(document.getElementById("sanBar"),estado.sanM,estado.san,"fill-san");
+  document.getElementById("pvMaxDisplay").innerText=`${estado.pv} / ${estado.pvM}`;
+  document.getElementById("peMaxDisplay").innerText=`${estado.pe} / ${estado.peM}`;
+  document.getElementById("sanMaxDisplay").innerText=`${estado.san} / ${estado.sanM}`;
+}
+
+function atualizarDefesa(){const agi=parseInt(document.getElementById("agilidadeInput").value)||0;const bonus=estado.itens.reduce((a,i)=>a+parseInt(i.bonusDef||0),0);const def=parseInt(document.getElementById("defesaInput").value)||0;document.getElementById("defesaTotal").innerText=`= ${10+agi+bonus+def}`;}
+
+function renderizarPericias(){const c=document.getElementById("periciasContainer");c.innerHTML="";for(let n in mapaPericias){if(!estado.treinos[n])estado.treinos[n]=0;let t=estado.treinos[n];let d=document.createElement("div");d.className="pericia"+(t>=15?" maximo":"");d.innerHTML=`<span>${n} (${mapaPericias[n].toUpperCase()})</span><div>${t}<button onclick="estado.treinos['${n}']=Math.min(15,estado.treinos['${n}']+5);renderizarPericias();salvar();">+5</button><button onclick="estado.treinos['${n}']=Math.max(0,estado.treinos['${n}']-5);renderizarPericias();salvar();">-5</button></div>`;c.appendChild(d);}}
+
+function renderizarLista(id,lista,props){const c=document.getElementById(id);c.innerHTML="";lista.forEach((it,i)=>{const d=document.createElement("div");d.className="ritual-card";d.innerHTML=props.map(p=>`<input value="${it[p]||''}" placeholder="${p}">`).join("")+`<button>X</button>`;d.querySelectorAll("input").forEach((inp,j)=>inp.oninput=()=>{it[props[j]]=inp.value;salvar();});d.querySelector("button").onclick=()=>{lista.splice(i,1);renderizarLista(id,lista,props);salvar();};c.appendChild(d);});}
+
+document.getElementById("btnAddHabilidade").onclick=()=>{const n=document.getElementById("habilidadeNome").value,d=document.getElementById("habilidadeDescricao").value;if(!n)return;estado.habilidades.push({nome:n,descricao:d});document.getElementById("habilidadeNome").value="";document.getElementById("habilidadeDescricao").value="";renderizarLista("habilidadesLista",estado.habilidades,["nome","descricao"]);salvar();}
+document.getElementById("btnAddItem").onclick=()=>{const n=prompt("Nome:"),p=parseInt(prompt("Peso:"))||0,b=parseInt(prompt("Bônus:"))||0;if(!n)return;estado.itens.push({nome:n,peso:p,bonusDef:b});renderizarLista("itensLista",estado.itens,["nome","peso"]);atualizarCarga();atualizarDefesa();salvar();}
+document.getElementById("btnAddRitual").onclick=()=>{const n=document.getElementById("ritualNome").value,c=parseInt(document.getElementById("ritualCusto").value)||0;if(!n)return;estado.rituais.push({nome:n,custo:c});document.getElementById("ritualNome").value="";document.getElementById("ritualCusto").value="";renderizarLista("rituaisLista",estado.rituais,["nome","custo"]);salvar();}
+
+function atualizarCarga(){const total=estado.itens.reduce((a,i)=>a+parseInt(i.peso||0),0);const max=Math.max(2,(parseInt(document.getElementById("forcaInput").value)||1)*5);estado.cargaMax=max;document.getElementById("cargaAtual").innerText=total;document.getElementById("cargaMax").innerText=max;document.getElementById("cargaAtual").style.color=total>max?"red":"#0f0";}
+
+function salvar(){localStorage.setItem("fichaParanormal",JSON.stringify(estado));}
+function carregar(){const d=JSON.parse(localStorage.getItem("fichaParanormal")||"{}");if(!d)return;Object.assign(estado,d);document.getElementById("nomeInput").value=estado.nome||"";renderizarPericias();renderizarLista("habilidadesLista",estado.habilidades,["nome","descricao"]);renderizarLista("itensLista",estado.itens,["nome","peso"]);renderizarLista("rituaisLista",estado.rituais,["nome","custo"]);atualizarBarras();atualizarDefesa();atualizarCarga();}
+
+["forcaInput","agilidadeInput","vigorInput","intelectoInput","presencaInput","nexInput","defesaInput","pvInput","peInput","sanInput","classeSelect"].forEach(id=>document.getElementById(id).oninput=calcularTudo);
+
+function calcularTudo(){estado.nome=document.getElementById("nomeInput").value;const c=document.getElementById("classeSelect").value,v=parseInt(document.getElementById("vigorInput").value)||0,p=parseInt(document.getElementById("presencaInput").value)||0,n=Math.max(5,parseInt(document.getElementById("nexInput").value)||5),l=Math.floor(n/5);if(c==="combatente"){estado.pvM=20+v+(l-1)*(4+v);estado.peM=2+p+(l-1)*(2+p);estado.sanM=12+(l-1)*3;}else if(c==="especialista"){estado.pvM=16+v+(l-1)*(3+v);estado.peM=3+p+(l-1)*(3+p);estado.sanM=16+(l-1)*4;}else{estado.pvM=12+v+(l-1)*(2+v);estado.peM=4+p+(l-1)*(4+p);estado.sanM=20+(l-1)*5;}if(estado.pv===0)estado.pv=estado.pvM;if(estado.pe===0)estado.pe=estado.peM;if(estado.san===0)estado.san=estado.sanM;atualizarBarras();atualizarDefesa();atualizarCarga();}
+
+carregar();calcularTudo();
+</script>
+</body>
+  </html>
